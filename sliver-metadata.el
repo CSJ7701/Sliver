@@ -1,6 +1,6 @@
 ;;; sliver-metadata.el --- Metadata parsing and setting utilities -*- lexical-binding: t; -*-
 
-(require 'sliver-core.el)
+(declare-function sliver--current-sliver "sliver-core")
 
 (defun sliver--scan-metadata (file)
   "Return plist of metadata for FILE."
