@@ -3,6 +3,7 @@
 (require 'sliver-core)
 (require 'sliver-author)
 (require 'sliver-load)
+(require 'sliver-metadata)
 (require 'sliver-conditions)
 (require 'sliver-ui)
 

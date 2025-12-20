@@ -56,6 +56,13 @@ Slivers are loaded using ~sliver-load~.  Loading is:
 - Idempotent (already-loaded slivers are skipped)
 - Observable (tracked internally and via UI)
 
+
+/Note:/ ChatGPT taught me a new word when I asked it to proofread this README. Now you get to learn it too
+
+_Idempotent_ (adjective)
+- (mathematics) Relating to or being a mathematical quantity which, when applied to itself under a given binary operation, equals itself
+- (computing) Describing an action which, when performed multiple times, has no further effect on its subject after the first time
+
 ** Dependencies
 
 A sliver may declare other slivers that *must* be loaded first.  Sliver ensures:
@@ -64,7 +71,7 @@ A sliver may declare other slivers that *must* be loaded first.  Sliver ensures:
 - Cyclic dependencies are detected and rejected
 
   
-Dependencies are strict: if a dependency cannot be loaded, the requesting sliver will not load.
+Dependencies are strict: if a dependency cannot be loaded, the requesting sliver will not load. Dependencies are _unidirectional_; if X is dependent on Y, Y is not necessarily dependent on X.
 
 ** Conflicts
 
@@ -76,11 +83,11 @@ Conflict handling is configurable:
 - Users may supply a custom conflict handler
 
   
-Conflicts are symmetric and tracked globally.
+Conflicts are tracked globally and symmetric, meaning that if X declares a conflict with Y, then Y must also conflict with X.
 
 ** Conditional Loading
 
-Sliver supports *conditional loading* at the call site.  A sliver load may be guarded by predicates such as:
+Sliver supports *conditional loading*. A =sliver-load= call may be guarded by predicates such as:
 
 - Hostname
 - Operating system
@@ -183,6 +190,7 @@ The UI displays:
   
 Selecting a sliver opens a details sidebar.
 
+
 * Reference
 
 ** Variables
@@ -207,6 +215,9 @@ Selecting a sliver opens a details sidebar.
 - ~sliver-refresh~ :: Re-scan sliver directory and metadata
 - ~sliver-module-table~ :: Display the sliver UI
 - sliver-machine-facts :: Display basic machine facts. Primarily for debugging or making condition definition easier.
+
+** UI Images
+-- WIP --
 
 
 * Contributing

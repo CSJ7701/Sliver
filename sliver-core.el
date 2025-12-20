@@ -41,7 +41,20 @@
 (defun sliver--module-file (name)
   "Return absolute file path for module NAME."
   (expand-file-name (format "%s-module.el" name)
-	  sliver-modules-dir))
+		    sliver-modules-dir))
+
+(defun sliver--current-sliver ()
+  "Return sliver name if current buffer is a sliver file."
+  (when buffer-file-name
+    (let* ((dir (file-name-directory buffer-file-name))
+	   (name (file-name-nondirectory buffer-file-name)))
+      (when (and (string-prefix-p (expand-file-name sliver-modules-dir)
+				  (expand-file-name dir))
+		 (string-suffix-p "-module.el" name))
+	(let ((sliver-name (substring name 0 (- (length name)
+						(length "-module.el")))))
+	  (when (member sliver-name sliver--all-modules)
+	    sliver-name))))))
 
 (defun sliver-refresh ()
   "Refresh internal module lists."
@@ -51,9 +64,12 @@
 	   (replace-regexp-in-string "-module\\.el$" "" file))
 	 (directory-files sliver-modules-dir nil "-module\\.el$")))
   (setq sliver--unloaded-modules
-	(seq-difference sliver--all-modules sliver--loaded-modules)))
+	(seq-difference sliver--all-modules sliver--loaded-modules))
+  (sliver--scan-all-metadata)
+  (sliver--validate-metadata)
+  )
 
-(defun sliver-declare-conflict (module conflict)
+(defun sliver-declare-conflict-XXX (module conflict)
   "Declare MODULE and CONFLICT as mutually exclusive."
   (when (and (member module sliver--all-modules)
 	     (member conflict sliver--all-modules))
@@ -65,7 +81,7 @@
       (add module conflict)
       (add conflict module))))
 
-(defun sliver-declare-dependency (module dependency)
+(defun sliver-declare-dependency-XXX (module dependency)
   "Declare the MODULE depends on DEPENDENCY."
   (when (and (member module sliver--all-modules)
 	     (member dependency sliver--all-modules))
