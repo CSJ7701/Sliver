@@ -42,7 +42,7 @@
     (define-key map (kbd "q") #'sliver-module-table-quit)
     map))
 
-(defvar sliver-module-details-view-mode-map
+(defvar sliver-module-details-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "q") #'kill-buffer-and-window)
     map))
@@ -61,7 +61,7 @@
   (use-local-map sliver-module-table-mode-map)
   (tabulated-list-init-header))
 
-(define-derived-mode sliver-module-details-view-mode special-mode "Sliver Module Details"
+(define-derived-mode sliver-module-details-mode special-mode "Sliver Module Details"
   "Major mode for displaying details about a Sliver module."
   (read-only-mode 1))
 

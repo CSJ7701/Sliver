@@ -40,7 +40,7 @@
 
 (defun sliver--module-file (name)
   "Return absolute file path for module NAME."
-  (expand file-name (format "%s-module.el" name)
+  (expand-file-name (format "%s-module.el" name)
 	  sliver-modules-dir))
 
 (defun sliver-refresh ()
