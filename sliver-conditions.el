@@ -31,6 +31,15 @@ Valid keys:
     ('window-system (sliver-machine-window-system))
     (_ nil)))
 
+(defun sliver-machine-facts ()
+  "Print machine information"
+  (interactive)
+  (let* ((host (sliver-machine-fact 'hostname))
+	 (os (sliver-machine-fact 'os))
+	 (ws (sliver-machine-fact 'window-system)))
+    (message "You are on %s running %s with a %s window system." host os ws)))
+
+
 ;;;;; Profiles
 
 (defcustom sliver-machine-profiles nil
