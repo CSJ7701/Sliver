@@ -138,7 +138,7 @@
   "Show conflicts and dependencies for the module at point.
 Used in Sliver's module table view."
   (interactive)
-  (when-let* ((module (tabulated-list-get-id))
+  (let* ((module (tabulated-list-get-id))
 	      (deps (gethash module sliver--module-dependencies))
 	      (conflicts (gethash module sliver--module-conflicts)))
     (let ((buf (get-buffer-create "*Sliver Module Details*")))
