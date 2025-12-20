@@ -267,14 +267,9 @@ The sliver module table, with detail sidebar.
 
 * Contributing
 
-Contributions are welcome. Sliver aims to remain:
-- Small
-- Explicit
-- Understandable
+Contributions are welcome.
 
   
-Please avoid adding implicit behavior, global policy, or framework-style abstractions.  Please open an issue or discussion before proposing large changes.
-
 * Roadmap
 
 Planned and possible future work:
