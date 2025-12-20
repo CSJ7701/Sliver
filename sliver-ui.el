@@ -139,8 +139,8 @@
 Used in Sliver's module table view."
   (interactive)
   (when-let* ((module (tabulated-list-get-id))
-	      (deps (gethash sliver--module-dependencies))
-	      (conflicts (gethash sliver--module-conflicts)))
+	      (deps (gethash module sliver--module-dependencies))
+	      (conflicts (gethash module sliver--module-conflicts)))
     (let ((buf (get-buffer-create "*Sliver Module Details*")))
       (with-current-buffer buf
 	(erase-buffer)
