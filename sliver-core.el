@@ -3,7 +3,9 @@
 (require 'cl-lib)
 (require 'seq)
 (require 'subr-x)
-(require 'sliver-metadata)
+
+(declare-function sliver--scan-all-metadata "sliver-metadata")
+(declare-function sliver--validate-metadata "sliver-metadata")
 
 (defgroup sliver nil
   "Modular Emacs configuration"
