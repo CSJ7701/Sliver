@@ -19,10 +19,12 @@ Sliver is, at its core, a wrapper around =load-file= with added QoL functionalit
 - [[#overview][Overview]]
 - [[#concepts][Concepts]]
   - [[#loading][Loading]]
+  - [[#metadata][Metadata]]
   - [[#dependencies][Dependencies]]
   - [[#conflicts][Conflicts]]
   - [[#conditional-loading][Conditional Loading]]
 - [[#usage][Usage]]
+  - [[#installation][Installation]]
   - [[#initial-setup][Initial setup]]
   - [[#basic-loading][Basic loading]]
   - [[#declaring-dependencies][Declaring dependencies]]
@@ -33,6 +35,7 @@ Sliver is, at its core, a wrapper around =load-file= with added QoL functionalit
 - [[#reference][Reference]]
   - [[#variables][Variables]]
   - [[#functions][Functions]]
+  - [[#images][Images]]
 - [[#contributing][Contributing]]
 - [[#roadmap][Roadmap]]
 :END:
@@ -118,6 +121,16 @@ Conditions may be combined with =:match= (default ='and=).
 If conditions do not match, the sliver is silently skipped.
 
 * Usage
+
+** Installation
+
+Sliver.el can be installed with Straight.el (or other git-enabled package managers), or can be installed manually.
+I do not currently plan on publishing this to Melpa without significant outside interest.
+
+#+begin_src emacs-lisp
+  (straight-use-package
+   '(sliver :type git :host github :repo "CSJ7701/Sliver"))
+#+end_src
 
 ** Initial setup
 
@@ -240,8 +253,16 @@ Selecting a sliver opens a details sidebar.
 - ~sliver-module-table~ :: Display the sliver UI
 - sliver-machine-facts :: Display basic machine facts. Primarily for debugging or making condition definition easier.
 
-** UI Images
--- WIP --
+** Images
+
+An example of how to get started with setting up your own sliver config.
+[[file:./assets/init_file.png]]
+
+An example of what a sliver file might look like.
+[[file:./assets/example_sliver.png]]
+
+The sliver module table, with detail sidebar.
+[[file:./assets/table_and_sidebar.png]]
 
 
 * Contributing
