@@ -50,6 +50,7 @@ A /sliver/ is a single Emacs Lisp file representing one logical unit of configur
 - Are loaded exactly once per session
 
 Slivers are typically stored in a dedicated directory (e.g. =~/.emacs.d/slivers/=).
+Since Slivers are /just elisp files/, they can contain whatever you want. You can abstract a sliver to cover your entire "gui" setup, or encapsulate an entire language setup. Personally, I have a sliver for each major package I load, and then wrap groups of smaller packages into slivers based on common functionality. Since sliver /does not replace a package manager/, you can (and should) include your =use-package= calls (or whatever method your package manager uses) inside your slivers.
 
 ** Loading
 
@@ -98,6 +99,15 @@ Conflict handling is configurable:
 
 
 Conflicts are tracked within a metadata header inside each sliver.
+
+#+begin_src emacs-lisp
+
+  ;; Example of a custom 'on-conflict' function
+  (setq sliver-on-conflict-function
+        (lambda (sliver conflict)
+  	(message "Warning: %s conflicts with %s" sliver conflict)))
+
+#+end_src
 
 
 ** Conditional Loading
