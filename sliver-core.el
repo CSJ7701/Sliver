@@ -3,6 +3,7 @@
 (require 'cl-lib)
 (require 'seq)
 (require 'subr-x)
+(require 'sliver-metadata)
 
 (defgroup sliver nil
   "Modular Emacs configuration"
