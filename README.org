@@ -63,6 +63,22 @@ _Idempotent_ (adjective)
 - (mathematics) Relating to or being a mathematical quantity which, when applied to itself under a given binary operation, equals itself
 - (computing) Describing an action which, when performed multiple times, has no further effect on its subject after the first time
 
+
+** Metadata
+Sliver allows modules to conflict with, or depend on, other modules. This functionality is supported through the use of header metadata in each sliver file (these are just elisp comments). Metadata should look like this:
+
+#+begin_src emacs-lisp
+
+  ;;; name: Sliver Name
+  ;;; conflicts: other_sliver
+  ;;; depends: other_other_sliver
+  ;;; description: This is an example
+
+  ; 'name' is entirely unused, and only present for organizational purposes.
+  ; 'description' is also unused.
+  
+#+end_src
+
 ** Dependencies
 
 A sliver may declare other slivers that *must* be loaded first.  Sliver ensures:

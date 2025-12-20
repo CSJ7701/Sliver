@@ -19,11 +19,11 @@
     (setq module (read-string "Create module: ")))
   (let ((file (sliver--module-file module)))
     (if (file-exists-p file)
-	(message "Module '%s' already exists" module)
-      (progn
-	(find-file file)
+	(user-error "Module '%s' already exists" module)
+      (with-current-buffer (find-file-noselect file)
 	(insert (format ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module))
-	))))
+	(save-buffer)
+	(switch-to-buffer (current-buffer))))))
 
 ;;;###autoload
 (defun sliver-insert-module (&optional module)
