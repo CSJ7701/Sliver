@@ -64,13 +64,15 @@
 
 ;;;###autoload
 (defun sliver-declare-conflict (module conflict)
-  "Declare CONFLICT for MODULE by editing its metadata."
+  "Declare CONFLICT for MODULE by editing its metadata.
+Declares a bidirectional conflict (creates a matching entry in the CONFLICT module)."
   (interactive
    (let ((mod (or (sliver--current-sliver)
 		  (completing-read "Sliver: " sliver--all-modules))))
      (list mod
 	   (completing-read "Conflicts with: " sliver--all-modules))))
-  (sliver--edit-metadata module 'conflicts dependency))
+  (sliver--edit-metadata module 'conflicts conflict)
+  (sliver--edit-metadata conflict 'conflicts module))
 
 (defun sliver--edit-metadata (module key value)
   "Add VALUE to KEY metadata for MODULE."

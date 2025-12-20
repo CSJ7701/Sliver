@@ -13,7 +13,7 @@ Sliver is a small Emacs package for structuring Emacs configurations into *expli
 - Lightweight visualization UI
 
 
-Sliver is, at its core, a wrapper around =load-file= with added QoL functionality intended to reduce the mental overhead of managing a large initialization file. It is *not* a package manager.
+Sliver is, at its core, a wrapper around =load-file= with added QoL functionality to reduce the mental overhead of managing a large initialization file. It is *not* a package manager.
 
 :CONTENTS:
 - [[#overview][Overview]]
@@ -57,7 +57,7 @@ Slivers are loaded using ~sliver-load~.  Loading is:
 - Observable (tracked internally and via UI)
 
 
-/Note:/ ChatGPT taught me a new word when I asked it to proofread this README. Now you get to learn it too
+/Note:/ ChatGPT taught me a new word when I asked it to proofread this README. Now you get to learn it too :D
 
 _Idempotent_ (adjective)
 - (mathematics) Relating to or being a mathematical quantity which, when applied to itself under a given binary operation, equals itself
@@ -69,9 +69,10 @@ A sliver may declare other slivers that *must* be loaded first.  Sliver ensures:
 
 - Dependencies load before the requesting sliver
 - Cyclic dependencies are detected and rejected
+- Dependencies are unidirectional (if X is dependent on Y, Y is not necessarily dependent on X)
 
   
-Dependencies are strict: if a dependency cannot be loaded, the requesting sliver will not load. Dependencies are _unidirectional_; if X is dependent on Y, Y is not necessarily dependent on X.
+Dependencies are strict: if a dependency cannot be loaded, the requesting sliver will not load. Dependencies are tracked in a metadata header inside each sliver.
 
 ** Conflicts
 
@@ -81,9 +82,11 @@ Conflict handling is configurable:
 
 - By default, conflicts raise an error
 - Users may supply a custom conflict handler
+- Conflicts are symmetric (if X declares a conflict with Y, then a matching conflict is declared from Y to X)
 
-  
-Conflicts are tracked globally and symmetric, meaning that if X declares a conflict with Y, then Y must also conflict with X.
+
+Conflicts are tracked within a metadata header inside each sliver.
+
 
 ** Conditional Loading
 
@@ -94,7 +97,8 @@ Sliver supports *conditional loading*. A =sliver-load= call may be guarded by pr
 - Window system
 - User-defined profiles
 
-  
+
+Conditions may be combined with =:match= (default ='and=).
 If conditions do not match, the sliver is silently skipped.
 
 * Usage
@@ -102,7 +106,7 @@ If conditions do not match, the sliver is silently skipped.
 ** Initial setup
 
 #+begin_src emacs-lisp
-  ;; Default module directory is "modules" within the 'user-emacs-directory'
+  ;; Default sliver directory is "modules" within the 'user-emacs-directory'
   (setq sliver-modules-dir "~/.emacs.d/modules")
   ;; Default init file is 'init.el' within the 'user-emacs-directory'
   (setq sliver-init-file "~/.emacs.d/init.el")
@@ -117,13 +121,14 @@ If conditions do not match, the sliver is silently skipped.
 
 ** Declaring dependencies
 
-Inside a sliver file:
-
 #+BEGIN_SRC emacs-lisp
   ;; Declare a one-directional dependency.
   ;; The "core" sliver now depends on the "theme" sliver, but not vice versa.
   (sliver-declare-dependency "core" "theme")
 #+END_SRC
+
+The =sliver-declare-dependency= function is also interactive. It will prompt for each module if not provided.
+Dependencies can be defined manually by editing the header inside the respective sliver file.
 
 ** Declaring conflicts
 
@@ -132,6 +137,9 @@ Inside a sliver file:
   ;; The "vim" sliver now conflicts with the "evil" sliver, and vice versa.
   (sliver-declare-conflict "vim" "evil")
 #+END_SRC
+
+The =sliver-declare-conflict= function is also interactive. It will prompt for each module if not provided.
+Conflicts can be defined manually by editing the header inside the respective sliver file.
 
 ** Conditional loading
 
