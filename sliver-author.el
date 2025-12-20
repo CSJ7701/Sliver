@@ -22,7 +22,7 @@
 	(message "Module '%s' already exists" module)
       (progn
 	(find-file file)
-	(insert ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module)
+	(insert (format ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module))
 	))))
 
 ;;;###autoload
