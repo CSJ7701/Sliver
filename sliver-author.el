@@ -20,7 +20,10 @@
   (let ((file (sliver--module-file module)))
     (if (file-exists-p file)
 	(message "Module '%s' already exists" module)
-      (find-file file))))
+      (progn
+	(find-file file)
+	(insert ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module)
+	))))
 
 ;;;###autoload
 (defun sliver-insert-module (&optional module)
