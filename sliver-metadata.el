@@ -8,7 +8,7 @@
     (insert-file-contents file nil 0 2048)
     (let (deps conflicts desc)
       (goto-char (point-min))
-      (while (and (not eobp)
+      (while (and (not (eobp))
 		  (looking-at "^;;; \\([^:]+\\):[ \t]*\\(.*\\)$"))
 	(pcase (match-string 1)
 	  ("depends"
