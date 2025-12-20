@@ -256,12 +256,19 @@ Selecting a sliver opens a details sidebar.
 ** Images
 
 An example of how to get started with setting up your own sliver config.
+
 [[file:./assets/init_file.png]]
 
+
+
 An example of what a sliver file might look like.
+
 [[file:./assets/example_sliver.png]]
 
+
+
 The sliver module table, with detail sidebar.
+
 [[file:./assets/table_and_sidebar.png]]
 
 
