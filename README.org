@@ -1,0 +1,229 @@
+#+OPTIONS: toc:2
+
+* Overview
+:PROPERTIES:
+:TOC:      :include all :depth 2
+:END:
+
+Sliver is a small Emacs package for structuring Emacs configurations into *explicit, modular load units* called /slivers/.  It provides:
+
+- Declarative module loading
+- Explicit dependency and conflict management
+- Conditional loading based on machine or environment
+- Lightweight visualization UI
+
+
+Sliver is, at its core, a wrapper around =load-file= with added QoL functionality intended to reduce the mental overhead of managing a large initialization file. It is *not* a package manager.
+
+:CONTENTS:
+- [[#overview][Overview]]
+- [[#concepts][Concepts]]
+  - [[#loading][Loading]]
+  - [[#dependencies][Dependencies]]
+  - [[#conflicts][Conflicts]]
+  - [[#conditional-loading][Conditional Loading]]
+- [[#usage][Usage]]
+  - [[#initial-setup][Initial setup]]
+  - [[#basic-loading][Basic loading]]
+  - [[#declaring-dependencies][Declaring dependencies]]
+  - [[#declaring-conflicts][Declaring conflicts]]
+  - [[#conditional-loading][Conditional loading]]
+  - [[#profiles][Profiles]]
+  - [[#ui][UI]]
+- [[#reference][Reference]]
+  - [[#variables][Variables]]
+  - [[#functions][Functions]]
+- [[#contributing][Contributing]]
+- [[#roadmap][Roadmap]]
+:END:
+
+
+* Concepts
+A /sliver/ is a single Emacs Lisp file representing one logical unit of configuration.  Slivers:
+
+- Are loaded explicitly
+- May declare dependencies on other slivers
+- May declare conflicts with other slivers
+- Are loaded exactly once per session
+
+Slivers are typically stored in a dedicated directory (e.g. =~/.emacs.d/slivers/=).
+
+** Loading
+
+Slivers are loaded using ~sliver-load~.  Loading is:
+
+- Ordered (dependencies first)
+- Idempotent (already-loaded slivers are skipped)
+- Observable (tracked internally and via UI)
+
+** Dependencies
+
+A sliver may declare other slivers that *must* be loaded first.  Sliver ensures:
+
+- Dependencies load before the requesting sliver
+- Cyclic dependencies are detected and rejected
+
+  
+Dependencies are strict: if a dependency cannot be loaded, the requesting sliver will not load.
+
+** Conflicts
+
+Slivers may declare conflicts with other slivers.  A conflict indicates that two slivers should not be loaded in the same session.
+
+Conflict handling is configurable:
+
+- By default, conflicts raise an error
+- Users may supply a custom conflict handler
+
+  
+Conflicts are symmetric and tracked globally.
+
+** Conditional Loading
+
+Sliver supports *conditional loading* at the call site.  A sliver load may be guarded by predicates such as:
+
+- Hostname
+- Operating system
+- Window system
+- User-defined profiles
+
+  
+If conditions do not match, the sliver is silently skipped.
+
+* Usage
+
+** Initial setup
+
+#+begin_src emacs-lisp
+  ;; Default module directory is "modules" within the 'user-emacs-directory'
+  (setq sliver-modules-dir "~/.emacs.d/modules")
+  ;; Default init file is 'init.el' within the 'user-emacs-directory'
+  (setq sliver-init-file "~/.emacs.d/init.el")
+#+end_src
+
+** Basic loading
+
+#+BEGIN_SRC emacs-lisp
+(sliver-load "ui")
+(sliver-load "completion")
+#+END_SRC
+
+** Declaring dependencies
+
+Inside a sliver file:
+
+#+BEGIN_SRC emacs-lisp
+  ;; Declare a one-directional dependency.
+  ;; The "core" sliver now depends on the "theme" sliver, but not vice versa.
+  (sliver-declare-dependency "core" "theme")
+#+END_SRC
+
+** Declaring conflicts
+
+#+BEGIN_SRC emacs-lisp
+  ;; Declare a two-directional conflict
+  ;; The "vim" sliver now conflicts with the "evil" sliver, and vice versa.
+  (sliver-declare-conflict "vim" "evil")
+#+END_SRC
+
+** Conditional loading
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; Load the 'gui' sliver if you are on a machine with hostname 'Jimmy' and using the 'x' window system
+  (sliver-load "gui"
+  	     :hostname "Jimmy"
+  	     :window-system 'x)
+#+END_SRC
+
+By default, all predicates must match.  Logical behavior may be changed:
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; Load the 'gui' sliver if you are on a machine with hostname 'Jimmy' OR using the 'x' window system
+  (sliver-load "gui"
+  	     :hostname "Jimmy"
+  	     :window-system 'x
+  	     :match 'or)
+  
+#+END_SRC
+
+** Profiles
+
+Profiles allow grouping conditions under a single name:
+
+#+BEGIN_SRC emacs-lisp
+
+  ;; Keep in mind. When setting profiles via 'sliver-machine-profiles', 'os' and 'window-system' are symbols.
+  ;; This means they must be set as "gnu/linux", "darwin" or "x".
+  ;; When setting conditions directly in 'sliver-load' however, they must be defined as "'gnu/linux", "'darwin", or "'x"
+  
+  (setq sliver-machine-profiles
+        '(("Home-PC" . (:hostname "Jimmy" :os gnu/linux))))
+
+  (sliver-load "desktop" :profile "Home-PC")
+
+#+END_SRC
+
+** UI
+
+Sliver includes an optional UI for introspection:
+
+#+BEGIN_SRC emacs-lisp
+(M-x sliver-module-table)
+#+END_SRC
+
+The UI displays:
+
+- All discovered slivers
+- Load state
+- Conflict counts
+- Dependency information
+
+  
+Selecting a sliver opens a details sidebar.
+
+* Reference
+
+** Variables
+
+- ~sliver-modules-dir~ :: Directory containing sliver files
+- sliver-init-file :: Your init file
+- sliver-machine-profiles :: Alist of machine profiles
+- ~sliver-conditional-verbose~ :: Enable verbose messages for conditional loading
+- ~sliver-on-conflict-function~ :: Function called when a conflict is detected
+- ~sliver-after-load-hook~ :: Hook run after a sliver is loaded
+  
+** Functions
+
+- ~sliver-load~ :: Load a sliver, optionally conditionally
+- sliver-open-module :: Open a sliver file
+- sliver-create-module :: Create a new module file
+- sliver-insert-module :: Insert a 'sliver-load' form for a module
+- sliver-init-module :: Insert a 'sliver-load' for for a module, and create the module file
+- sliver-open-init :: Open the sliver-init-file
+- ~sliver-declare-dependency~ :: Declare sliver dependencies
+- ~sliver-declare-conflict~ :: Declare sliver conflicts
+- ~sliver-refresh~ :: Re-scan sliver directory and metadata
+- ~sliver-module-table~ :: Display the sliver UI
+- sliver-machine-facts :: Display basic machine facts. Primarily for debugging or making condition definition easier.
+
+
+* Contributing
+
+Contributions are welcome. Sliver aims to remain:
+- Small
+- Explicit
+- Understandable
+
+  
+Please avoid adding implicit behavior, global policy, or framework-style abstractions.  Please open an issue or discussion before proposing large changes.
+
+* Roadmap
+
+Planned and possible future work:
+
+- Reverse dependency inspection in UI
+- Optional unload support (best-effort... this is complex)
+- Transient-based UI actions
+- Expanded condition predicates
