@@ -60,15 +60,8 @@ Slivers are loaded using ~sliver-load~.  Loading is:
 - Observable (tracked internally and via UI)
 
 
-/Note:/ ChatGPT taught me a new word when I asked it to proofread this README. Now you get to learn it too :D
-
-_Idempotent_ (adjective)
-- (mathematics) Relating to or being a mathematical quantity which, when applied to itself under a given binary operation, equals itself
-- (computing) Describing an action which, when performed multiple times, has no further effect on its subject after the first time
-
-
 ** Metadata
-Sliver allows modules to conflict with, or depend on, other modules. This functionality is supported through the use of header metadata in each sliver file (these are just elisp comments). Metadata should look like this:
+Sliver allows slivers to conflict with, or depend on, other slivers. This functionality is supported through the use of header metadata in each sliver file (these are just elisp comments). Metadata should look like this:
 
 #+begin_src emacs-lisp
 
@@ -156,7 +149,7 @@ I do not currently plan on publishing this to Melpa without significant outside 
   (sliver-declare-dependency "core" "theme")
 #+END_SRC
 
-The =sliver-declare-dependency= function is also interactive. It will prompt for each module if not provided.
+The =sliver-declare-dependency= function is also interactive. It will prompt for each sliver if not provided.
 Dependencies can be defined manually by editing the header inside the respective sliver file.
 
 ** Declaring conflicts
@@ -167,7 +160,7 @@ Dependencies can be defined manually by editing the header inside the respective
   (sliver-declare-conflict "vim" "evil")
 #+END_SRC
 
-The =sliver-declare-conflict= function is also interactive. It will prompt for each module if not provided.
+The =sliver-declare-conflict= function is also interactive. It will prompt for each sliver if not provided.
 Conflicts can be defined manually by editing the header inside the respective sliver file.
 
 ** Conditional loading
@@ -198,9 +191,9 @@ Profiles allow grouping conditions under a single name:
 
 #+BEGIN_SRC emacs-lisp
 
-  ;; Keep in mind. When setting profiles via 'sliver-machine-profiles', 'os' and 'window-system' are symbols.
-  ;; This means they must be set as "gnu/linux", "darwin" or "x".
-  ;; When setting conditions directly in 'sliver-load' however, they must be defined as "'gnu/linux", "'darwin", or "'x"
+  ;; Note: When setting profiles via 'sliver-machine-profiles', 'os' and 'window-system' are symbols.
+  ;; This means they must be set as gnu/linux, darwin or x (without quotes).
+  ;; When setting conditions directly in 'sliver-load' however, they must be quoted: 'gnu/linux, 'darwin, or 'x.
   
   (setq sliver-machine-profiles
         '(("Home-PC" . (:hostname "Jimmy" :os gnu/linux))))
@@ -233,8 +226,8 @@ Selecting a sliver opens a details sidebar.
 ** Variables
 
 - ~sliver-modules-dir~ :: Directory containing sliver files
-- sliver-init-file :: Your init file
-- sliver-machine-profiles :: Alist of machine profiles
+- ~sliver-init-file~ :: Your init file
+- ~sliver-machine-profiles~ :: Alist of machine profiles
 - ~sliver-conditional-verbose~ :: Enable verbose messages for conditional loading
 - ~sliver-on-conflict-function~ :: Function called when a conflict is detected
 - ~sliver-after-load-hook~ :: Hook run after a sliver is loaded
@@ -242,16 +235,16 @@ Selecting a sliver opens a details sidebar.
 ** Functions
 
 - ~sliver-load~ :: Load a sliver, optionally conditionally
-- sliver-open-module :: Open a sliver file
-- sliver-create-module :: Create a new module file
-- sliver-insert-module :: Insert a 'sliver-load' form for a module
-- sliver-init-module :: Insert a 'sliver-load' for for a module, and create the module file
-- sliver-open-init :: Open the sliver-init-file
+- ~sliver-open-module~ :: Open a sliver file
+- ~sliver-create-module~ :: Create a new sliver file
+- ~sliver-insert-module~ :: Insert a 'sliver-load' form for a sliver
+- ~sliver-init-module~ :: Insert a 'sliver-load' for for a sliver, and create the sliver file
+- ~sliver-open-init~ :: Open the sliver-init-file
 - ~sliver-declare-dependency~ :: Declare sliver dependencies
 - ~sliver-declare-conflict~ :: Declare sliver conflicts
 - ~sliver-refresh~ :: Re-scan sliver directory and metadata
 - ~sliver-module-table~ :: Display the sliver UI
-- sliver-machine-facts :: Display basic machine facts. Primarily for debugging or making condition definition easier.
+- ~sliver-machine-facts~ :: Display basic machine facts. Primarily for debugging or making condition definition easier.
 
 ** Images
 
