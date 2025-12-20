@@ -19,7 +19,7 @@
     (setq module (read-string "Create module: ")))
   (let ((file (sliver--module-file module)))
     (if (file-exists-p file)
-	(user-error "Module '%s' already exists" module)
+	(message "Module '%s' already exists" module)
       (with-current-buffer (find-file-noselect file)
 	(insert (format ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module))
 	(save-buffer)
