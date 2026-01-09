@@ -75,12 +75,18 @@ Example:
 
 ;;;; Condition matching
 (defun sliver--condition-match-p (key expected)
-  "Return non-nil if condition KEY matches EXPECTED."
+  "Return non-nil if condition KEY matches EXPECTED.
+If EXPECTED is a list, match if the fact equals any element."
   (pcase key
     ('profile
-     (sliver-machine-profile-match-p expected))
+     (if (listp expected)
+         (cl-some #'sliver-machine-profile-match-p expected)
+       (sliver-machine-profile-match-p expected)))
     (_
-     (equal (sliver-machine-fact key) expected))))
+     (let ((fact (sliver-machine-fact key)))
+       (if (listp expected)
+           (member fact expected)
+         (equal fact expected))))))
 
 (defun sliver-condition-match-p (conditions &optional match)
   "Evaluate CONDITIONS using MATCH strategy.
