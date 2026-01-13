@@ -181,6 +181,12 @@ Conflicts can be defined manually by editing the header inside the respective sl
   (sliver-load "gui"
   	     :hostname "Jimmy"
   	     :window-system 'x)
+
+  ;; Load the 'gui' sliver if you are on a machine with hostname 'Jimmy' or 'Johnny' and using the 'x' window system
+  ;; Note that, when passing a list to a predicate, it must be quoted.
+  (sliver-load "gui"
+  	     :hostname '("Jimmy" "Johnny")
+  	     :window-system 'x)
 #+END_SRC
 
 By default, all predicates must match.  Logical behavior may be changed:
@@ -204,11 +210,14 @@ Profiles allow grouping conditions under a single name:
   ;; Note: When setting profiles via 'sliver-machine-profiles', 'os' and 'window-system' are symbols.
   ;; This means they must be set as gnu/linux, darwin or x (without quotes).
   ;; When setting conditions directly in 'sliver-load' however, they must be quoted: 'gnu/linux, 'darwin, or 'x.
-  
+  ;; Lists must also be quoted.
+
   (setq sliver-machine-profiles
-        '(("Home-PC" . (:hostname "Jimmy" :os gnu/linux))))
+        '(("Home-PC" . (:hostname "Jimmy" :os gnu/linux))
+  	  ("Machines-with-Firefox" . (:hostname '("Billy" "Bobby")))))
 
   (sliver-load "desktop" :profile "Home-PC")
+  (sliver-load "firefox" :profile "Machines-with-Firefox")
 
 #+END_SRC
 

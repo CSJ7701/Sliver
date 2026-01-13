@@ -69,6 +69,8 @@ Example:
       (let ((key (pop plist))
 	    (val (pop plist)))
 	(when (keywordp key)
+	  (when (and (listp val) (eq (car val) 'quote))
+	    (setq val (cadr val)))
 	  (push (cons (intern (substring (symbol-name key) 1)) val)
 		out))))
     (nreverse out)))
@@ -81,7 +83,8 @@ If EXPECTED is a list, match if the fact equals any element."
     ('profile
      (if (listp expected)
          (cl-some #'sliver-machine-profile-match-p expected)
-       (sliver-machine-profile-match-p expected)))
+       (sliver-machine-profile-match-p expected)
+       ))
     (_
      (let ((fact (sliver-machine-fact key)))
        (if (listp expected)
@@ -129,4 +132,4 @@ If no conditions are supplied, the returned predicate always succeeds."
 (provide 'sliver-conditions)
 
 ;;; sliver-conditions.el ends here
-   
+
