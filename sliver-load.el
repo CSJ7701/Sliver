@@ -1,7 +1,18 @@
 ;;; sliver-load.el --- Module loading logic -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'sliver-core)
 (require 'sliver-conditions)
+
+;;; Code:
 
 (defgroup sliver-load nil
   "Core module loading for Sliver."
@@ -31,7 +42,7 @@
   (unless (member module sliver--loaded-modules)
     (let ((deps (gethash module sliver--module-dependencies)))
       (dolist (dep deps)
-	(sliver--load-with-deps dep (cons module seen))))
+    (sliver--load-with-deps dep (cons module seen))))
     (sliver--load-single module)))
 
 (defun sliver--load-single (module)
@@ -39,10 +50,10 @@
   (let ((conflicts (gethash module sliver--module-conflicts)))
     (when (seq-some (lambda (m) (member m sliver--loaded-modules)) conflicts)
       (funcall sliver-on-conflict-function
-	       "Module '%s' conflicts with loaded modules: %s"
-	       module
-	       (string-join (seq-filter (lambda (m) (member m sliver--loaded-modules)) conflicts)
-			    ", "))))
+           "Module '%s' conflicts with loaded modules: %s"
+           module
+           (string-join (seq-filter (lambda (m) (member m sliver--loaded-modules)) conflicts)
+                ", "))))
   (let ((file (sliver--module-file module)))
     (when (file-exists-p file)
       (load file)
@@ -57,7 +68,8 @@
 Optionally gated by conditional keywords.
 
 When PLIST is empty, MODULE is loaded unconditionally.
-When PLIST contains condition keywords, MODULE is loaded only if the constructed predicate evaluates to non-nil.
+When PLIST contains condition keywords, MODULE is loaded only if the constructed
+predicate evaluates to non-nil.
 Recognized condition keywords are defined by 'sliver-build-condition'."
   (interactive)
   (sliver-refresh)
@@ -65,7 +77,7 @@ Recognized condition keywords are defined by 'sliver-build-condition'."
     (setq module (completing-read "Load module: " sliver--all-modules)))
 
   (let* ((predicate (apply #'sliver-build-condition plist))
-	 (allowed (funcall predicate)))
+     (allowed (funcall predicate)))
     (cond
      (allowed
       (sliver--load-with-deps module nil))
@@ -74,4 +86,5 @@ Recognized condition keywords are defined by 'sliver-build-condition'."
      (t nil))))
 
 (provide 'sliver-load)
+
 ;;; sliver-load.el ends here

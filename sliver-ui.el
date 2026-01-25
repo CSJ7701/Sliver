@@ -1,11 +1,22 @@
 ;;; sliver-ui.el --- UI for sliver -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'tabulated-list)
 (require 'sliver-core)
 (require 'sliver-load)
 (require 'sliver-author)
 
 ;;;; Faces
+
+;;; Code:
 
 (defface sliver-ui-module-face
   '((t :weight bold))
@@ -53,10 +64,10 @@
 (define-derived-mode sliver-module-table-mode tabulated-list-mode "Sliver Modules"
   "Major mode for viewing sliver modules."
   (setq tabulated-list-format
-	[("Module" 24 t)
-	 ("Loaded" 8 t)
-	 ("Conflicts" 10 nil)
-	 ("Dependencies" 15 nil)])
+    [("Module" 24 t)
+     ("Loaded" 8 t)
+     ("Conflicts" 10 nil)
+     ("Dependencies" 15 nil)])
   (setq tabulated-list-padding 2)
   (use-local-map sliver-module-table-mode-map)
   (tabulated-list-init-header))
@@ -82,30 +93,30 @@
   (insert "\n")
   (if items
       (dolist (item items)
-	(insert (format "  • %s\n" (propertize item 'face face))))
+    (insert (format "  • %s\n" (propertize item 'face face))))
     (insert "  (none)\n"))
   (insert "\n"))
 
 
 ;;;; Table Logic
-			  
+
 (defun sliver-module-table-refresh ()
   "Refresh the Sliver module table."
   (interactive)
   (sliver-refresh)
   (setq tabulated-list-entries
-	(mapcar
-	 (lambda (module)
-	   (let* ((loaded (member module sliver--loaded-modules))
-		  (conflicts (gethash module sliver--module-conflicts))
-		  (dependencies (gethash module sliver--module-dependencies)))
-	     (list module
-		   (vector
-		    (propertize module 'face 'sliver-ui-module-face)
-		    (sliver--bool-cell loaded)
-		    (sliver--count-cell (length conflicts) 'sliver-ui-conflict-face)
-		    (sliver--count-cell (length dependencies) 'sliver-ui-dependency-face)))))
-	 sliver--all-modules))
+    (mapcar
+     (lambda (module)
+       (let* ((loaded (member module sliver--loaded-modules))
+          (conflicts (gethash module sliver--module-conflicts))
+          (dependencies (gethash module sliver--module-dependencies)))
+         (list module
+           (vector
+            (propertize module 'face 'sliver-ui-module-face)
+            (sliver--bool-cell loaded)
+            (sliver--count-cell (length conflicts) 'sliver-ui-conflict-face)
+            (sliver--count-cell (length dependencies) 'sliver-ui-dependency-face)))))
+     sliver--all-modules))
   (tabulated-list-print t))
 
 ;;;###autoload
@@ -139,17 +150,17 @@
 Used in Sliver's module table view."
   (interactive)
   (let* ((module (tabulated-list-get-id))
-	      (deps (gethash module sliver--module-dependencies))
-	      (conflicts (gethash module sliver--module-conflicts)))
+          (deps (gethash module sliver--module-dependencies))
+          (conflicts (gethash module sliver--module-conflicts)))
     (let ((buf (get-buffer-create "*Sliver Module Details*")))
       (with-current-buffer buf
-	(erase-buffer)
-	(insert (propertize module 'face 'sliver-ui-module-face))
-	(insert "\n\n")
-	(sliver--insert-section "Dependencies" deps 'sliver-ui-dependency-face)
-	(sliver--insert-section "Conflicts" conflicts 'sliver-ui-conflict-face)
-	(goto-char (point-min))
-	(sliver-module-details-mode))
+    (erase-buffer)
+    (insert (propertize module 'face 'sliver-ui-module-face))
+    (insert "\n\n")
+    (sliver--insert-section "Dependencies" deps 'sliver-ui-dependency-face)
+    (sliver--insert-section "Conflicts" conflicts 'sliver-ui-conflict-face)
+    (goto-char (point-min))
+    (sliver-module-details-mode))
       (display-buffer-in-side-window
        buf '((side . right) (window-width . 45))))))
 
@@ -159,7 +170,7 @@ Used in Sliver's module table view."
   (when-let ((buf (get-buffer "*Sliver Module Details*")))
     (kill-buffer buf))
   (kill-buffer))
-  
+
 (provide 'sliver-ui)
+
 ;;; sliver-ui.el ends here
-		 

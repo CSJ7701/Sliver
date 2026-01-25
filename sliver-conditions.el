@@ -1,6 +1,17 @@
 ;;; sliver-conditions.el --- Machine facts and conditional loading for Sliver -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'cl-lib)
+
+;;; Code:
 
 (defgroup sliver-conditions nil
   "Machine context and conditional evaluation for Sliver."
@@ -32,11 +43,11 @@ Valid keys:
     (_ nil)))
 
 (defun sliver-machine-facts ()
-  "Print machine information"
+  "Print machine information."
   (interactive)
   (let* ((host (sliver-machine-fact 'hostname))
-	 (os (sliver-machine-fact 'os))
-	 (ws (sliver-machine-fact 'window-system)))
+     (os (sliver-machine-fact 'os))
+     (ws (sliver-machine-fact 'window-system)))
     (message "You are on %s running %s with a %s window system." host os ws)))
 
 
@@ -47,7 +58,9 @@ Valid keys:
 Each entry has form:
    (PROFILE_NAME . CONDITIONS)
 
-Where CONDITIONS is a plist suitable for 'sliver-build-condition', excluding :profile itself.
+Where CONDITIONS is a plist suitable for 'sliver-build-condition',
+excluding :profile itself.
+
 Example:
    '((\"Home-PC\" . (:hostname \"Jimmy\" :os gnu/linux))
      (\"Work-Laptop\" . (:os darwin)))"
@@ -59,20 +72,20 @@ Example:
   (let ((entry (assoc profile sliver-machine-profiles)))
     (when entry
       (let ((predicate (apply #'sliver-build-condition (cdr entry))))
-	(funcall predicate)))))
+    (funcall predicate)))))
 
 ;;;; Condition normalization
 (defun sliver--normalize-conditions (plist)
-  "Normalize PLIST into an alist of (KEY . VALUE)"
+  "Normalize PLIST into an alist of (KEY . VALUE)."
   (let (out)
     (while plist
       (let ((key (pop plist))
-	    (val (pop plist)))
-	(when (keywordp key)
-	  (when (and (listp val) (eq (car val) 'quote))
-	    (setq val (cadr val)))
-	  (push (cons (intern (substring (symbol-name key) 1)) val)
-		out))))
+        (val (pop plist)))
+    (when (keywordp key)
+      (when (and (listp val) (eq (car val) 'quote))
+        (setq val (cadr val)))
+      (push (cons (intern (substring (symbol-name key) 1)) val)
+        out))))
     (nreverse out)))
 
 ;;;; Condition matching
@@ -99,12 +112,12 @@ MATCH is either 'and (default) or 'or."
     (pcase mode
       ('or
        (cl-some (lambda (c)
-		  (sliver--condition-match-p (car c) (cdr c)))
-		conditions))
+          (sliver--condition-match-p (car c) (cdr c)))
+        conditions))
       (_
        (cl-every (lambda (c)
-		   (sliver--condition-match-p (car c) (cdr c)))
-		 conditions)))))
+           (sliver--condition-match-p (car c) (cdr c)))
+         conditions)))))
 
 ;;;; Public constructor
 (defun sliver-build-condition (&rest plist)
@@ -119,17 +132,16 @@ Recognized keywords:
 
 If no conditions are supplied, the returned predicate always succeeds."
   (let* ((match (plist-get plist :match))
-	 (filtered (cl-loop for (k v) on plist by #'cddr
-			    unless (eq k :match)
-			    collect k
-			    and collect v))
-	 (conditions (sliver--normalize-conditions filtered)))
+     (filtered (cl-loop for (k v) on plist by #'cddr
+                unless (eq k :match)
+                collect k
+                and collect v))
+     (conditions (sliver--normalize-conditions filtered)))
     (if (null conditions)
-	(lambda () t)
+    (lambda () t)
       (lambda ()
-	(sliver-condition-match-p conditions match)))))
+    (sliver-condition-match-p conditions match)))))
 
 (provide 'sliver-conditions)
 
 ;;; sliver-conditions.el ends here
-

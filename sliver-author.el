@@ -1,6 +1,17 @@
 ;;; sliver-author.el --- Authoring helpers -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'sliver-core)
+
+;;; Code:
 
 ;;;###autoload
 (defun sliver-open-module (&optional module)
@@ -19,11 +30,11 @@
     (setq module (read-string "Create module: ")))
   (let ((file (sliver--module-file module)))
     (if (file-exists-p file)
-	(message "Module '%s' already exists" module)
+    (message "Module '%s' already exists" module)
       (with-current-buffer (find-file-noselect file)
-	(insert (format ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module))
-	(save-buffer)
-	(switch-to-buffer (current-buffer))))))
+    (insert (format ";;; name: %s\n;;; depends:\n;;; conflicts:\n;;; description:\n" module))
+    (save-buffer)
+    (switch-to-buffer (current-buffer))))))
 
 ;;;###autoload
 (defun sliver-insert-module (&optional module)
@@ -51,4 +62,5 @@
   (find-file sliver-init-file))
 
 (provide 'sliver-author)
+
 ;;; sliver-author.el ends here

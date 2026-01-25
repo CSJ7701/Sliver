@@ -1,14 +1,25 @@
 ;;; sliver-core.el --- Core state and registry -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'cl-lib)
 (require 'seq)
 (require 'subr-x)
+
+;;; Code:
 
 (declare-function sliver--scan-all-metadata "sliver-metadata")
 (declare-function sliver--validate-metadata "sliver-metadata")
 
 (defgroup sliver nil
-  "Modular Emacs configuration"
+  "Modular Emacs configuration."
   :group 'initialization)
 
 (defcustom sliver-modules-dir
@@ -44,35 +55,34 @@
 (defun sliver--module-file (name)
   "Return absolute file path for module NAME."
   (expand-file-name (format "%s-module.el" name)
-		    sliver-modules-dir))
+            sliver-modules-dir))
 
 (defun sliver--current-sliver ()
   "Return sliver name if current buffer is a sliver file."
   (when buffer-file-name
     (let* ((dir (file-name-directory buffer-file-name))
-	   (name (file-name-nondirectory buffer-file-name)))
+       (name (file-name-nondirectory buffer-file-name)))
       (when (and (string-prefix-p (expand-file-name sliver-modules-dir)
-				  (expand-file-name dir))
-		 (string-suffix-p "-module.el" name))
-	(let ((sliver-name (substring name 0 (- (length name)
-						(length "-module.el")))))
-	  (when (member sliver-name sliver--all-modules)
-	    sliver-name))))))
+                  (expand-file-name dir))
+         (string-suffix-p "-module.el" name))
+    (let ((sliver-name (substring name 0 (- (length name)
+                        (length "-module.el")))))
+      (when (member sliver-name sliver--all-modules)
+        sliver-name))))))
 
 (defun sliver-refresh ()
   "Refresh internal module lists."
   (setq sliver--all-modules
-	(mapcar
-	 (lambda (file)
-	   (replace-regexp-in-string "-module\\.el$" "" file))
-	 (directory-files sliver-modules-dir nil "-module\\.el$")))
+    (mapcar
+     (lambda (file)
+       (replace-regexp-in-string "-module\\.el$" "" file))
+     (directory-files sliver-modules-dir nil "-module\\.el$")))
   (setq sliver--unloaded-modules
-	(seq-difference sliver--all-modules sliver--loaded-modules))
+    (seq-difference sliver--all-modules sliver--loaded-modules))
   (sliver--scan-all-metadata)
   (sliver--validate-metadata)
   )
 
 (provide 'sliver-core)
-;;; sliver-core.el ends here
 
-  
+;;; sliver-core.el ends here

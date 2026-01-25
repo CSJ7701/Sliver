@@ -1,6 +1,17 @@
 ;;; sliver-metadata.el --- Metadata parsing and setting utilities -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2025-2026 Christian Johnson
+
+;; Authors: Christian Johnson
+;; Maintainer: Christian Johnson
+;; Created: 2025/12/20
+
+;;; Commentary:
+;;
+
 (require 'sliver-core)
+
+;;; Code:
 
 (defun sliver--scan-metadata (file)
   "Return plist of metadata for FILE."
@@ -9,15 +20,15 @@
     (let (deps conflicts desc)
       (goto-char (point-min))
       (while (and (not (eobp))
-		  (looking-at "^;;; \\([^:]+\\):[ \t]*\\(.*\\)$"))
-	(pcase (match-string 1)
-	  ("depends"
-	   (setq deps (split-string (match-string 2))))
-	  ("conflicts"
-	   (setq conflicts (split-string (match-string 2))))
-	  ("description"
-	   (setq desc (match-string 2))))
-	(forward-line 1))
+          (looking-at "^;;; \\([^:]+\\):[ \t]*\\(.*\\)$"))
+    (pcase (match-string 1)
+      ("depends"
+       (setq deps (split-string (match-string 2))))
+      ("conflicts"
+       (setq conflicts (split-string (match-string 2))))
+      ("description"
+       (setq desc (match-string 2))))
+    (forward-line 1))
       (list :depends deps :conflicts conflicts :description desc))))
 
 (defun sliver--scan-all-metadata ()
@@ -26,40 +37,40 @@
   (clrhash sliver--module-conflicts)
   (dolist (file (directory-files sliver-modules-dir t "-module\\.el$"))
     (let* ((metadata (sliver--scan-metadata file))
-	   (module (file-name-base file))
-	   (module-name (substring module 0 (- (length module)
-					       (length "-module")))))
+       (module (file-name-base file))
+       (module-name (substring module 0 (- (length module)
+                           (length "-module")))))
       (when-let ((deps (plist-get metadata :depends)))
-	(puthash module-name deps sliver--module-dependencies))
+    (puthash module-name deps sliver--module-dependencies))
       (when-let ((conflicts (plist-get metadata :conflicts)))
-	(puthash module-name conflicts sliver--module-conflicts)))))
+    (puthash module-name conflicts sliver--module-conflicts)))))
 
 (defun sliver--validate-metadata ()
   (maphash
    (lambda (module deps)
      (dolist (dep deps)
        (unless (member dep sliver--all-modules)
-	 (message "Sliver warning: %s depends on unknown module %s"
-		  module dep))))
+     (message "Sliver warning: %s depends on unknown module %s"
+          module dep))))
    sliver--module-dependencies)
 
   (maphash
    (lambda (module conflicts)
      (dolist (c conflicts)
        (unless (member c sliver--all-modules)
-	 (message "Sliver warning: %s conflicts with unknown module %s"
-		  module c))))
+     (message "Sliver warning: %s conflicts with unknown module %s"
+          module c))))
    sliver--module-conflicts))
-	   
+
 
 ;;;###autoload
 (defun sliver-declare-dependency (module dependency)
   "Declare DEPENDENCY for MODULE by editing its metadata."
   (interactive
    (let ((mod (or (sliver--current-sliver)
-		  (completing-read "Sliver: " sliver--all-modules))))
+          (completing-read "Sliver: " sliver--all-modules))))
      (list mod
-	   (completing-read "Depends on: " sliver--all-modules))))
+       (completing-read "Depends on: " sliver--all-modules))))
   (sliver--edit-metadata module 'depends dependency))
 
 ;;;###autoload
@@ -68,9 +79,9 @@
 Declares a bidirectional conflict (creates a matching entry in the CONFLICT module)."
   (interactive
    (let ((mod (or (sliver--current-sliver)
-		  (completing-read "Sliver: " sliver--all-modules))))
+          (completing-read "Sliver: " sliver--all-modules))))
      (list mod
-	   (completing-read "Conflicts with: " sliver--all-modules))))
+       (completing-read "Conflicts with: " sliver--all-modules))))
   (sliver--edit-metadata module 'conflicts conflict)
   (sliver--edit-metadata conflict 'conflicts module))
 
@@ -81,18 +92,22 @@ Declares a bidirectional conflict (creates a matching entry in the CONFLICT modu
       (error "Module file does not exist: %s" file))
     (with-current-buffer (find-file-noselect file)
       (save-excursion
-	(goto-char (point-min))
-	(if (re-search-forward (format "^;;; %s:" key) nil t)
-	    (let ((line-end (line-end-position)))
-	      ;; Check if value already exists on this line
-	      (unless (save-excursion
-			(beginning-of-line)
-			(re-search-forward (regexp-quote value) line-end t))
-		(goto-char line-end)
-		(insert " " value)))
-	  ;; Create new metadata line
-	  (goto-char (point-min))
-	  (insert (format ";;; %s: %s\n" key value))))
+    (goto-char (point-min))
+    (if (re-search-forward (format "^;;; %s:" key) nil t)
+        (let ((line-end (line-end-position)))
+          ;; Check if value already exists on this line
+          (unless (save-excursion
+            (beginning-of-line)
+            (re-search-forward (regexp-quote value) line-end t))
+        (goto-char line-end)
+        (insert " " value)))
+      ;; Create new metadata line
+      (goto-char (point-min))
+      (insert (format ";;; %s: %s\n" key value))))
       (save-buffer))))
 
 (provide 'sliver-metadata)
+
+(provide 'sliver-metadata)
+
+;;; sliver-metadata.el ends here
