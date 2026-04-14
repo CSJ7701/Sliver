@@ -80,15 +80,17 @@
 ;;;; Helpers
 
 (defun sliver--bool-cell (value)
+  "Add a validation mark according to VALUE being nil or non-nil."
   (propertize
    (if value "✔" "✘")
    'face (if value 'sliver-ui-loaded-face 'sliver-ui-unloaded-face)))
 
 (defun sliver--count-cell (count face)
+  "Return COUNT as a string with FACE."
   (propertize (number-to-string count) 'face face))
 
 (defun sliver--insert-section (title items face)
-  "Insert a titled section with ITEMS into the current buffer."
+  "Insert a TITLE\\='d section with ITEMS into the current buffer with FACE."
   (insert (propertize title 'face 'sliver-ui-section-header-face))
   (insert "\n")
   (if items
@@ -137,7 +139,7 @@
     (sliver-module-table-refresh)))
 
 (defun sliver-open-module-at-point ()
-  "Run `sliver-open-module` on module at point."
+  "Run `sliver-open-module' on module at point."
   (interactive)
   (when-let* ((module (tabulated-list-get-id)))
     (sliver-open-module module)))

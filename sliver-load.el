@@ -70,7 +70,7 @@ Optionally gated by conditional keywords.
 When PLIST is empty, MODULE is loaded unconditionally.  When
 PLIST contains condition keywords, MODULE is loaded only if the
 constructed predicate evaluates to non-nil.  Recognized condition
-keywords are defined by `sliver-build-condition`."
+keywords are defined by `sliver-build-condition'."
   (interactive)
   (sliver-refresh)
   (unless module

@@ -59,9 +59,9 @@ Each entry has form:
    (PROFILE_NAME . CONDITIONS)
 
 Where CONDITIONS is a plist suitable for
-`sliver-build-condition`, excluding :profile itself.
+`sliver-build-condition', excluding :profile itself.
 
-Example: '((\"Home-PC\" . (:hostname \"Jimmy\" :os gnu/linux))
+Example: \\='((\"Home-PC\" . (:hostname \"Jimmy\" :os gnu/linux))
      (\"Work-Laptop\" . (:os darwin)))"
   :type '(alist :key-type string :value-type plist)
   :group 'sliver-conditions)
@@ -106,7 +106,7 @@ If EXPECTED is a list, match if the fact equals any element."
 (defun sliver-condition-match-p (conditions &optional match)
   "Evaluate CONDITIONS using MATCH strategy.
 CONDITIONS is an alist of (KEY . VALUE).  MATCH is either
-'and (default) or 'or."
+\\='and (default) or \\='or."
   (let ((mode (or match 'and)))
     (pcase mode
       ('or

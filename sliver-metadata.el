@@ -46,6 +46,7 @@
     (puthash module-name conflicts sliver--module-conflicts)))))
 
 (defun sliver--validate-metadata ()
+  "Validate metadata, by warning about interactions with unknown modules."
   (maphash
    (lambda (module deps)
      (dolist (dep deps)
